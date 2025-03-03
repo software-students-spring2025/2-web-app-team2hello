@@ -79,6 +79,5 @@ To populate initial data in your local instance of the database, run `python pop
 
 ## Task boards
 
-See instructions. Delete this line and place a link to the task boards here.
 Sprint 1 - https://github.com/orgs/software-students-spring2025/projects/108/views/2
 Sprint 2 - https://github.com/orgs/software-students-spring2025/projects/130/views/2
