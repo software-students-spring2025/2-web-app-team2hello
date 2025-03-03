@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor's Courses</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff; 
+            color: #000000; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 375px;
+            height: calc(375px * 16 / 9); 
+            text-align: center;
+            border: 2px solid #ccc; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .course-buttons, .course-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .button, .back-btn {
+            background-color: #808080; 
+            color: white; 
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover, .back-btn:hover {
+            background-color: #666666; 
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            background-color: #404040;
+        }
+
+        /* Roster Page Styles */
+        .roster-list {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .roster-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .student-name {
+            font-weight: bold;
+        }
+
+        .student-id {
+            color: #555;
+        }
+
+        .btn {
+            background-color: #808080;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+
+        }
+
+        .btn:hover {
+            background-color: #666666;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            background-color: #404040;
+        }
+
+        .search-input {
+            padding: 10px;
+            font-size: 16px;
+            width: 90%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Home Page -->
+    <div id="homePage" class="container">
+        <h1>Courses</h1>
+        <div class="course-buttons">
+            <button class="button" onclick="showPage('coursePage', 'Math 101')">Math 101</button>
+            <button class="button" onclick="showPage('coursePage', 'Physics 202')">Physics 202</button>
+            <button class="button" onclick="showPage('coursePage', 'Chemistry 303')">Chemistry 303</button>
+            <button class="button" onclick="showPage('coursePage', 'Biology 404')">Biology 404</button>
+        </div>
+        
+        <button class="button" onclick="showPage('addCourse')">Add New Course</button>
+        
+    </div>
+
+    <!-- Course Navigation Page -->
+    <div id="coursePage" class="container hidden">
+        <h1>Course Title</h1>
+        <div class="course-options">
+            <button class="button" onclick="showPage('rosterPage')">View Class Roster</button>
+            
+            <button class="button" onclick="showPage('searchStudent')">Search a Student</button>
+            
+            
+            <button class="button" onclick="showPage('manageGrades')">Manage Grades</button>
+            
+        </div>
+        <button class="button back-button" onclick="showPage('homePage')">Back to Courses</button>
+    </div>
+
+
+
+    <!-- Class Roster Page -->
+    <div id="rosterPage" class="container hidden">
+        <h1>Course Name Roster</h1>
+        <div class="roster-list">
+            <div class="roster-item">
+                <button class="student-btn" onclick="openStudentGrades('John Doe')">
+                    <div class="student-name">John Doe</div>
+                    <div class="student-id">ID: 12345</div>
+                </button>
+            </div>
+            <div class="roster-item">
+                <button class="student-btn" onclick="openStudentGrades('Jane Smith')">
+                    <div class="student-name">Jane Smith</div>
+                    <div class="student-id">ID: 67890</div>
+                </button>
+            </div>
+            <div class="roster-item">
+                <button class="student-btn" onclick="openStudentGrades('Michael Johnson')">
+                    <div class="student-name">Michael Johnson</div>
+                    <div class="student-id">ID: 11223</div>
+                </button>
+            </div>
+            <div class="roster-item">
+                <button class="student-btn" onclick="openStudentGrades('Emily Brown')">
+                    <div class="student-name">Emily Brown</div>
+                    <div class="student-id">ID: 44556</div>
+                </button>
+            </div>
+            <div class="roster-item">
+                <button class="student-btn" onclick="openStudentGrades('Alice Williams')">
+                    <div class="student-name">Alice Williams</div>
+                    <div class="student-id">ID: 78901</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Add Student Button on Roster Page -->
+        <button class="btn" onclick="showPage('addStudentPage')">Add Student</button>
+
+
+    
+        <button class="back-btn" onclick="showPage('coursePage')">Back to Course Management</button>
+    </div>
+    
+    <script>
+        // Function to navigate to the student's grades page
+        function openStudentGrades(studentName) {
+            // You can store the student's name or ID to show their details in the grades page
+            console.log('Navigating to grades page for:', studentName);
+            // Replace with actual navigation to the student grades page
+            // For example: showPage('studentGradesPage');
+        }
+    
+        // Function to switch between pages
+        function showPage(pageId) {
+            const pages = ['coursePage', 'rosterPage', 'studentGradesPage'];
+            pages.forEach(page => {
+                document.getElementById(page).classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+    </script>
+    
+
+    <!-- Search a Student Page -->
+    <div id="searchStudent" class="container hidden">
+        <h1>Search a Student</h1>
+        <input type="text" class="search-input" placeholder="Enter student name...">
+        <button class="btn">Search</button>
+        <button class="back-btn" onclick="showPage('coursePage')">Back to Course Management</button>
+    </div>
+
+
+    <!-- Manage Grades Page -->
+<div id="manageGrades" class="container hidden">
+    <h1>Manage Grades</h1>
+    <h2>Class Average:</h2>
+    <h2>Median:</h2>
+    
+
+
+
+
+    <div>
+        <label for="grade">Adjustment:</label>
+        <input type="text" id="grade" class="search-input" placeholder="Enter value to adjust by...">
+    </div>
+
+    <div class="course-buttons">
+        <button class="button" onclick="addGrade()">Add to Grade</button>
+        <button class="button" onclick="updateGrade()">Remove from Grade</button>
+    </div>
+    
+    
+
+    <button class="back-btn" onclick="showPage('coursePage')">Back to Course Management</button>
+</div>
+
+<script>
+    // Store grades as an array of objects with student name and grade
+    let grades = [];
+
+    // Function to show the page
+    function showPage(pageId) {
+        const pages = ['homePage', 'coursePage', 'rosterPage', 'search-student-page', 'manageGrades'];
+        pages.forEach(page => {
+            document.getElementById(page).classList.add('hidden');
+        });
+        document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    // Function to add a grade
+    function addGrade() {
+        const studentName = document.getElementById('studentName').value;
+        const grade = document.getElementById('grade').value;
+
+        if (studentName && grade) {
+            grades.push({ studentName, grade });
+            updateGradesList();
+        } else {
+            alert('Please enter both student name and grade.');
+        }
+    }
+
+    // Function to update a grade
+    function updateGrade() {
+        const studentName = document.getElementById('studentName').value;
+        const grade = document.getElementById('grade').value;
+
+        if (studentName && grade) {
+            const index = grades.findIndex(grade => grade.studentName === studentName);
+            if (index !== -1) {
+                grades[index].grade = grade;
+                updateGradesList();
+            } else {
+                alert('Student not found.');
+            }
+        } else {
+            alert('Please enter both student name and grade.');
+        }
+    }
+
+    // Function to delete a grade
+    function deleteGrade() {
+        const studentName = document.getElementById('studentName').value;
+
+        if (studentName) {
+            const index = grades.findIndex(grade => grade.studentName === studentName);
+            if (index !== -1) {
+                grades.splice(index, 1);
+                updateGradesList();
+            } else {
+                alert('Student not found.');
+            }
+        } else {
+            alert('Please enter the student name.');
+        }
+    }
+
+    // Function to update the grades list display
+    function updateGradesList() {
+        const gradesList = document.getElementById('gradesList');
+        gradesList.innerHTML = ''; // Clear current list
+
+        grades.forEach(grade => {
+            const li = document.createElement('li');
+            li.textContent = `${grade.studentName}: ${grade.grade}`;
+            gradesList.appendChild(li);
+        });
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Student Assignment Grades Management Page -->
+<div id="studentGrades" class="container hidden">
+    <h1>Manage Grades for <span id="studentNameTitle"></span></h1>
+
+    <!-- Add New Assignment -->
+    <div>
+        <label for="newAssignment">New Assignment:</label>
+        <input type="text" id="newAssignment" placeholder="Enter new assignment name">
+    </div>
+
+    <div>
+        <label for="newAssignmentGrade">Grade:</label>
+        <input type="number" id="newAssignmentGrade" placeholder="Enter grade">
+    </div>
+
+    <button class="button" onclick="addAssignment()">Add Assignment</button>
+
+    <h2>Assignments and Grades</h2>
+    <ul id="assignmentsList">
+        <!-- List of assignments and grades will go here -->
+    </ul>
+
+    <!-- Modify Grades Section -->
+    <div>
+        <h3>Modify Grade</h3>
+        <label for="modifyAssignment">Assignment:</label>
+        <select id="modifyAssignment"></select>
+    </div>
+
+    <div>
+        <label for="modifyGrade">New Grade:</label>
+        <input type="number" id="modifyGrade" placeholder="Enter new grade">
+    </div>
+
+    <button class="button" onclick="updateGrade()">Update Grade</button>
+
+    <!-- Delete Assignment Section -->
+    <div>
+        <h3>Delete Assignment</h3>
+        <label for="deleteAssignment">Assignment to Delete:</label>
+        <select id="deleteAssignment"></select>
+    </div>
+
+    <button class="button" onclick="deleteAssignment()">Delete Assignment</button>
+
+    <button class="back-btn" onclick="showPage('rosterPage')">Back to Roster</button>
+</div>
+
+
+<!-- Add Student Page -->
+<div id="addStudentPage" class="container hidden">
+    <h1>Add Student</h1>
+    <div>
+        <label for="studentName">Student Name:</label>
+        <input type="text" id="studentName" class="search-input" placeholder="Enter student name...">
+    </div>
+    <div>
+        <label for="studentID">Student ID:</label>
+        <input type="text" id="studentID" class="search-input" placeholder="Enter student ID...">
+    </div>
+    <button class="btn" onclick="addStudent()">Add Student</button>
+    <button class="back-btn" onclick="showPage('rosterPage')">Back to Roster</button>
+</div>
+
+<script>
+    // Function to add a student to the roster
+    function addStudent() {
+        const name = document.getElementById('studentName').value;
+        const id = document.getElementById('studentID').value;
+        
+        if (name && id) {
+            const rosterList = document.querySelector('.roster-list');
+            const studentDiv = document.createElement('div');
+            studentDiv.classList.add('roster-item');
+            studentDiv.innerHTML = `
+                <button class="student-btn" onclick="openStudentGrades('${name}')">
+                    <div class="student-name">${name}</div>
+                    <div class="student-id">ID: ${id}</div>
+                </button>
+            `;
+            rosterList.appendChild(studentDiv);
+            alert('Student added successfully!');
+            showPage('rosterPage');
+        } else {
+            alert('Please enter both student name and ID.');
+        }
+    }
+</script>
+
+
+<script>
+    // Mock data to simulate roster and student-specific assignments/grades
+    let students = [
+        { name: 'John Doe', assignments: [{ name: 'Math Homework 1', grade: 85 }, { name: 'Science Project', grade: 92 }] },
+        { name: 'Jane Smith', assignments: [{ name: 'Math Homework 1', grade: 90 }, { name: 'Science Project', grade: 88 }] },
+        { name: 'Michael Johnson', assignments: [{ name: 'Math Homework 1', grade: 90 }, { name: 'Science Project', grade: 88 }] }
+    
+    ];
+
+    let currentStudent = null;
+
+    // Function to show the page
+    function showPage(pageId) {
+        const pages = ['homePage', 'coursePage', 'rosterPage', 'studentGrades'];
+        pages.forEach(page => {
+            document.getElementById(page).classList.add('hidden');
+        });
+        document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    // Function to open the student grades page when a student is clicked from the roster
+    function openStudentGrades(studentName) {
+        currentStudent = students.find(student => student.name === studentName);
+        if (currentStudent) {
+            document.getElementById('studentNameTitle').textContent = currentStudent.name;
+            updateAssignmentsList();
+            updateAssignmentOptions();
+            showPage('studentGrades');
+        }
+    }
+
+    // Function to update the list of assignments for the current student
+    function updateAssignmentsList() {
+        const assignmentsList = document.getElementById('assignmentsList');
+        assignmentsList.innerHTML = ''; // Clear current list
+
+        currentStudent.assignments.forEach(assignment => {
+            const li = document.createElement('li');
+            li.textContent = `${assignment.name}: ${assignment.grade}`;
+            assignmentsList.appendChild(li);
+        });
+    }
+
+    // Function to add a new assignment for the current student
+    function addAssignment() {
+        const newAssignment = document.getElementById('newAssignment').value;
+        const newAssignmentGrade = document.getElementById('newAssignmentGrade').value;
+
+        if (newAssignment && newAssignmentGrade) {
+            currentStudent.assignments.push({ name: newAssignment, grade: parseInt(newAssignmentGrade) });
+            updateAssignmentsList();
+            updateAssignmentOptions();
+            document.getElementById('newAssignment').value = '';
+            document.getElementById('newAssignmentGrade').value = '';
+        } else {
+            alert('Please enter both assignment name and grade.');
+        }
+    }
+
+    // Function to update assignment options in the modify and delete sections
+    function updateAssignmentOptions() {
+        const modifySelect = document.getElementById('modifyAssignment');
+        const deleteSelect = document.getElementById('deleteAssignment');
+
+        modifySelect.innerHTML = '';
+        deleteSelect.innerHTML = '';
+
+        currentStudent.assignments.forEach(assignment => {
+            const option = document.createElement('option');
+            option.value = assignment.name;
+            option.textContent = assignment.name;
+            modifySelect.appendChild(option);
+
+            const deleteOption = document.createElement('option');
+            deleteOption.value = assignment.name;
+            deleteOption.textContent = assignment.name;
+            deleteSelect.appendChild(deleteOption);
+        });
+    }
+
+    // Function to update a grade for an existing assignment
+    function updateGrade() {
+        const assignmentName = document.getElementById('modifyAssignment').value;
+        const newGrade = document.getElementById('modifyGrade').value;
+
+        if (assignmentName && newGrade) {
+            const assignment = currentStudent.assignments.find(assignment => assignment.name === assignmentName);
+            if (assignment) {
+                assignment.grade = parseInt(newGrade);
+                updateAssignmentsList();
+            }
+        } else {
+            alert('Please select an assignment and enter a grade.');
+        }
+    }
+
+    // Function to delete an assignment
+    function deleteAssignment() {
+        const assignmentName = document.getElementById('deleteAssignment').value;
+
+        if (assignmentName) {
+            const assignmentIndex = currentStudent.assignments.findIndex(assignment => assignment.name === assignmentName);
+            if (assignmentIndex !== -1) {
+                currentStudent.assignments.splice(assignmentIndex, 1);
+                updateAssignmentsList();
+                updateAssignmentOptions();
+            }
+        } else {
+            alert('Please select an assignment to delete.');
+        }
+    }
+</script>
+
+<div id="addCourse" class="container hidden">
+    <h1>Add New Course</h1>
+    <form id="addCourseForm">
+        <div class="form-group">
+            <label for="courseName">Course Name</label>
+            <input type="text" id="courseName" name="courseName" required>
+        </div>
+        <div class="form-group">
+            <label for="courseCode">Course Code</label>
+            <input type="text" id="courseCode" name="courseCode" required>
+        </div>
+        <div class="form-group">
+            <label for="courseDescription">Course Description</label>
+            <textarea id="courseDescription" name="courseDescription" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Add Course</button>
+    </form>
+    <button class="back-btn" onclick="showPage('coursePage')">Back to Course Management</button>
+</div>
+
+<script>
+    // Function to handle form submission
+    document.getElementById('addCourseForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent form submission
+
+        const courseName = document.getElementById('courseName').value;
+        const courseCode = document.getElementById('courseCode').value;
+        const courseDescription = document.getElementById('courseDescription').value;
+
+        // Here you would add the course to your data model (for now, we'll just log it)
+        console.log('New Course Added:', {
+            courseName: courseName,
+            courseCode: courseCode,
+            courseDescription: courseDescription
+        });
+
+        // You can implement a real function to save this data (like sending it to a server or saving it locally)
+
+        // Optionally, clear the form after submission
+        document.getElementById('addCourseForm').reset();
+
+        // After adding, you can navigate back to the course management page
+        showPage('coursePage');
+    });
+
+    // Function to switch between pages
+    function showPage(pageId) {
+        const pages = ['coursePage', 'addCourse'];
+        pages.forEach(page => {
+            document.getElementById(page).classList.add('hidden');
+        });
+        document.getElementById(pageId).classList.remove('hidden');
+    }
+</script>
+
+
+
+
+
+    
+
+    
+
+    <script>
+        function showPage(pageId, courseName = 'Course Name') {
+            // Hide all pages
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('coursePage').classList.add('hidden');
+            document.getElementById('rosterPage').classList.add('hidden');
+            document.getElementById('searchStudent').classList.add('hidden');
+            document.getElementById('manageGrades').classList.add('hidden');
+            document.getElementById('studentGrades').classList.add('hidden');
+            document.getElementById('addCourse').classList.add('hidden');
+            document.getElementById('addStudentPage').classList.add('hidden');
+
+
+            // Show the selected page
+            document.getElementById(pageId).classList.remove('hidden');
+
+            // Update course title if navigating to course page
+            if (pageId === 'coursePage') {
+                document.getElementById('courseTitle').innerText = courseName;
+            }
+
+            // Update roster title to include the course name
+            if (pageId === 'rosterPage') {
+                document.getElementById('rosterTitle').innerText = "Course Name - Class Roster";
+            }
+        }
+    </script>
+
+</body>
+</html>
