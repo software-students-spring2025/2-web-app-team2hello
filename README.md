@@ -20,6 +20,29 @@ Our web application allows professors to efficiently manage student grades by pr
 
 Link to issues - https://github.com/software-students-spring2025/2-web-app-team2hello/issues 
 
+## Steps to run our deployment
+
+### Load dependancies
+- locally load the .env file found in the team discord channel
+- ensure the Docker App is open and running locally
+
+### Start App
+- run command, `docker-compose up --build`
+
+### Seed Data
+- in a seperate terminal window, run command, `docker exec -it 2-web-app-team2hello-flask-app-1 python3 populate_db_data.py`
+
+### Close App
+- press `ctrl + c` on windows in the terminal you ran `docker-compose up --build`
+- to safely close all docker volumes, run command `docker-compose down -v`
+
+## Task boards
+
+Sprint 1 - https://github.com/orgs/software-students-spring2025/projects/108/views/2
+Sprint 2 - https://github.com/orgs/software-students-spring2025/projects/130/views/2
+
+# Other information included in assignment specification
+
 ## Steps necessary to run the software
 
 ### Build and launch the database
@@ -77,8 +100,3 @@ Note that this will run the app only on your own computer. Other people will not
 ### Populate db data
 
 To populate initial data in your local instance of the database, run `python populate_db_data.py`
-
-## Task boards
-
-Sprint 1 - https://github.com/orgs/software-students-spring2025/projects/108/views/2
-Sprint 2 - https://github.com/orgs/software-students-spring2025/projects/130/views/2
