@@ -17,7 +17,8 @@ Our web application allows professors to efficiently manage student grades by pr
 7) As a professor who is always traveling, I want to be able to access grades through my phone.
 8) As a professor who sometimes makes mistakes, I want to be able to correct them easily through my phone.
 9) As a professor who curves, I want to be able to easily change all grades at once.
-    
+
+Link to issues - https://github.com/software-students-spring2025/2-web-app-team2hello/issues 
 
 ## Steps necessary to run the software
 
