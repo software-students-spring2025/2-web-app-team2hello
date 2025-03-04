@@ -82,6 +82,6 @@ def populate_students_and_assignments():
 
     db.students.insert_many(students)
 
-if __name__ == "__main__":
-    populate_students_and_assignments()
-    
+# if __name__ == "__main__":
+    # populate_students_and_assignments()
+    # populate_courses()
