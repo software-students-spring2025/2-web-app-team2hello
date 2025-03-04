@@ -1,17 +1,646 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Course List</title>
-    </head>
-    <body>
-        <h1>Available Courses</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor's Courses</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        <ul>
-            {% for course in docs %}
-            <li>{{ course.name }}</li>
-            {% endfor %}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff; 
+            color: #000000; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 375px;
+            height: calc(375px * 16 / 9); 
+            text-align: center;
+            border: 2px solid #ccc; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .course-buttons, .course-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .button, .back-btn {
+            background-color: #808080; 
+            color: white; 
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover, .back-btn:hover {
+            background-color: #666666; 
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            background-color: #404040;
+        }
+
+        /* Roster Page Styles */
+        .roster-list {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .roster-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .student-name {
+            font-weight: bold;
+        }
+
+        .student-id {
+            color: #555;
+        }
+
+        .btn {
+            background-color: #808080;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+
+        }
+
+        .btn:hover {
+            background-color: #666666;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            background-color: #404040;
+        }
+
+        .search-input {
+            padding: 10px;
+            font-size: 16px;
+            width: 90%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!--TODO
+        - Manage course grades DB Connection (load & modify)
+    -->
+
+    <!-- Home Page -->
+    <div id="homePage" class="container">
+        <h1>Courses</h1>
+            <div class="course-buttons" id="courseList">
+                <!-- Courses will be loaded here dynamically -->
+            </div>
+        <button class="button" onclick="showPage('addCourse')">Add New Course</button>
+    </div>
+
+
+    <!-- Data Loading Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            await loadCourses();
+            await loadStudents();
+        });
+        async function loadCourses() {
+            try {
+                const response = await fetch("/get_courses");
+                const courses = await response.json();
+                const courseList = document.getElementById("courseList");
+                courseList.innerHTML = "";
+                
+                courses.forEach(course => {
+                    const button = document.createElement("button");
+                    button.className = "button";
+                    button.textContent = course.name;
+                    button.onclick = () => showPage('coursePage', course.name); 
+                    courseList.appendChild(button);
+                });
+            } catch (error) {
+                console.error("Error loading courses:", error);
+            }
+        }
+        async function loadStudents() {
+            try {
+                const response = await fetch("/get_students");
+                const students = await response.json();
+                const studentList = document.getElementById("studentList");
+                studentList.innerHTML = "";
+
+                students.forEach(student => {
+                    const studentItem = document.createElement("div");
+                    studentItem.className = "roster-item";
+
+                    const button = document.createElement("button");
+                    button.className = "student-btn";
+                    button.onclick = () => showStudentDetails(student.student_id);
+
+                    const studentName = document.createElement("div");
+                    studentName.className = "student-name";
+                    studentName.textContent = student.name;
+                    const studentId = document.createElement("div");
+                    studentId.className = "student-id";
+                    studentId.textContent = "ID: " + student.student_id;
+
+                    button.appendChild(studentName);
+                    button.appendChild(studentId);
+
+                    studentItem.appendChild(button);
+
+                    studentList.appendChild(studentItem);
+                });
+            } catch (error) {
+                console.error("Error loading students:", error);
+            }
+        }
+    </script>
+    
+
+    <!-- Add Course Page -->
+    <div id="addCourse" class="container hidden">
+        <h1>Add New Course</h1>
+        <form id="addCourseForm">
+            <div class="form-group">
+                <label for="courseName">Course Name</label>
+                <input type="text" id="courseName" name="courseName" required>
+            </div>
+            <div class="form-group">
+                <label for="courseCode">Course Code</label>
+                <input type="text" id="courseCode" name="courseCode" required>
+            </div>
+            <div class="form-group">
+                <label for="courseDescription">Course Description</label>
+                <textarea id="courseDescription" name="courseDescription" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Add Course</button>
+        </form>
+
+        <button class="back-btn" onclick="showPage('coursePage')">Back to Course Management</button>
+    </div>
+    <!-- Add Course Script -->
+    <script>
+        document.getElementById("addCourseForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+        
+            const courseName = document.getElementById("courseName").value;
+            const courseCode = document.getElementById("courseCode").value;
+            const courseDescription = document.getElementById("courseDescription").value;
+        
+            const response = await fetch("/add_course", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    courseName: courseName,
+                    courseCode: courseCode,
+                    courseDescription: courseDescription
+                })
+            });
+            
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+                loadCourses();
+                showPage('homePage');
+            } else {
+                alert(result.error);
+            }
+        });
+    </script>
+        
+
+    <!-- Course Navigation Page -->
+    <div id="coursePage" class="container hidden">
+        <h1 id="courseTitle">Course Title</h1>
+        <div class="course-options">
+            <button class="button" onclick="showPage('rosterPage')">View Class Roster</button>
+            <button class="button" onclick="showPage('searchStudent')">Search a Student</button>
+            <button class="button" onclick="showPage('manageGrades')">Manage Grades</button>
+        </div>
+
+        <button class="button back-button" onclick="showPage('homePage')">Back to Courses</button>
+    </div>
+
+
+    <!-- Class Roster Page -->
+    <div id="rosterPage" class="container hidden">
+        <h1 id="rosterTitle">Class Roster</h1>
+        <div class="roster-list">
+            <div class="student-buttons" id="studentList">
+                <!-- Students will be loaded here dynamically -->
+            </div>
+        </div>
+
+        <button class="btn" onclick="showPage('addStudentPage')">Add Student</button>
+
+        <button class="back-btn" onclick="showPage('coursePage')">Back to Course Management</button>
+    </div>
+
+    
+    <!-- Add Student Page -->
+    <div id="addStudentPage" class="container hidden">
+        <h1>Add Student</h1>
+        <form id="addStudentForm">
+            <div>
+                <label for="studentName">Student Name:</label>
+                <input type="text" id="studentName" class="search-input" placeholder="Enter student name..." required>
+            </div>
+            <div>
+                <label for="studentID">Student ID:</label>
+                <input type="text" id="studentID" class="search-input" placeholder="Enter student ID..." required>
+            </div>
+            <button type="submit" class="btn">Add Student</button>
+        </form>
+
+        <button class="back-btn" onclick="showPage('rosterPage')">Back to Roster</button>
+    </div>
+    <!-- Add Student Script -->
+    <script>
+        document.getElementById("addStudentForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            
+            const studentName = document.getElementById("studentName").value;
+            const studentId = document.getElementById("studentID").value;
+            
+            const response = await fetch("/add_student", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: studentName,
+                    student_id: studentId
+                })
+            });
+            
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+                loadStudents();
+                showPage('rosterPage');
+            } else {
+                alert(result.error);
+            }
+        });
+    </script>
+
+
+    <!-- Search Student Page -->
+    <div id="searchStudent" class="container hidden">
+        <h1>Search Student</h1>
+        <div>
+            <label for="searchQuery">Search by Name or ID:</label>
+            <input type="text" id="searchQuery" class="search-input" placeholder="Enter student name or ID">
+        </div>
+        <button class="btn" onclick="searchStudent()">Search</button>
+
+        <h2 id="searchResultMessage" class="hidden">No student found</h2> <!-- Hidden by default -->
+
+        <button class="back-btn" onclick="showPage('coursePage')">Back to Course Management</button>
+    </div>
+    <!-- Search Student Script -->
+    <script>
+        async function searchStudent() {
+            const searchQuery = document.getElementById("searchQuery").value.trim();
+            const searchResultMessage = document.getElementById("searchResultMessage");
+            if (!searchQuery) {
+                alert("Please enter a student name or ID.");
+                return;
+            }
+    
+            try {
+                const response = await fetch(`/search_student?query=${searchQuery}`);
+                const result = await response.json();
+                if (response.ok) {
+                    showPage("studentGrades");
+                    showStudentDetails(result.student_id);
+                } else {
+                    searchResultMessage.textContent = result.error;
+                    searchResultMessage.classList.remove("hidden");
+                }
+            } catch (error) {
+                console.error("Error searching for student:", error);
+                alert("Failed to search for student.");
+            }
+        }
+    </script>
+    
+
+    <!--TODO DB Connection-->
+    <!-- Manage Grades Page -->
+    <div id="manageGrades" class="container hidden">
+        <h1>Manage Grades</h1>
+
+        <div>
+            <label for="studentName">Assignment Name or Overall Grade:</label>
+            <input type="text" id="studentName" class="search-input" placeholder="Enter...">
+        </div>
+
+        <div>
+            <label for="grade">Adjustment:</label>
+            <input type="text" id="grade" class="search-input" placeholder="Enter value to adjust by...">
+        </div>
+
+        <div class="course-buttons">
+            <button class="button" onclick="addGrade()">Add to Grade</button>
+            <button class="button" onclick="updateGrade()">Remove from Grade</button>
+        </div>
+        
+        <button class="back-btn" onclick="showPage('coursePage')">Back to Course Management</button>
+    </div>
+    <!--TODO DB Connection-->
+    <!-- Manage Grades Script -->
+    <script>
+        let grades = [];
+
+        // Function to add or adjust a grade
+        function addGrade() {
+            const studentName = document.getElementById('studentName').value;
+            const adjustment = parseFloat(document.getElementById('grade').value);
+
+            if (!studentName || isNaN(adjustment)) {
+                alert('Please enter both a valid assignment name and an adjustment value.');
+                return;
+            }
+
+            // Check if the student already exists
+            const existing = grades.find(entry => entry.studentName === studentName);
+
+            if (existing) {
+                existing.grade += adjustment; // Adjust the existing grade
+            } else {
+                grades.push({ studentName, grade: adjustment }); // Add a new entry
+            }
+
+            updateGradesList();
+        }
+
+        // Function to remove (subtract) from a grade
+        function removeFromGrade() {
+            const studentName = document.getElementById('studentName').value;
+            const adjustment = parseFloat(document.getElementById('grade').value);
+
+            if (!studentName || isNaN(adjustment)) {
+                alert('Please enter both a valid assignment name and an adjustment value.');
+                return;
+            }
+
+            const existing = grades.find(entry => entry.studentName === studentName);
+
+            if (existing) {
+                existing.grade -= adjustment; // Subtract adjustment
+                if (existing.grade <= 0) {
+                    grades = grades.filter(entry => entry.studentName !== studentName); // Remove if zero or negative
+                }
+            } else {
+                alert('Assignment not found.');
+            }
+
+            updateGradesList();
+        }
+
+        // Function to update the grades list display
+        function updateGradesList() {
+            const gradesList = document.getElementById('gradesList');
+            if (!gradesList) return; // Prevent errors if missing
+
+            gradesList.innerHTML = ''; // Clear the list
+
+            grades.forEach(entry => {
+                const li = document.createElement('li');
+                li.textContent = `${entry.studentName}: ${entry.grade.toFixed(2)}`;
+                gradesList.appendChild(li);
+            });
+        }
+    </script>
+
+
+    <!-- Student Assignment Grades Management Page -->
+    <div id="studentGrades" class="container hidden">
+        <h1>Manage Grades for <span id="studentNameTitle"></span><!-- Dynamic Loading Student Name --></h1>
+        <input type="hidden" id="studentId" />
+
+        <div>
+            <label for="newAssignment">New Assignment:</label>
+            <input type="text" id="newAssignment" placeholder="Enter new assignment name">
+        </div>
+        <div>
+            <label for="newAssignmentGrade">Grade:</label>
+            <input type="number" id="newAssignmentGrade" placeholder="Enter grade">
+        </div>
+        <button class="button" onclick="addAssignment()">Add Assignment</button>
+
+        <h2>Assignments and Grades</h2>
+        <ul id="assignmentsList">
+            <!-- Dynamic Loading List of Assignments -->
         </ul>
-    </body>
+
+        <div>
+            <h3>Modify Grade</h3>
+            <label for="modifyAssignment">Assignment:</label>
+            <select id="modifyAssignment"></select>
+        </div>
+        <div>
+            <label for="modifyGrade">New Grade:</label>
+            <input type="number" id="modifyGrade" placeholder="Enter new grade">
+        </div>
+        <button class="button" onclick="updateGrade()">Update Grade</button>
+
+        <div>
+            <h3>Delete Assignment</h3>
+            <label for="deleteAssignment">Assignment to Delete:</label>
+            <select id="deleteAssignment"></select>
+        </div>
+        <button class="button" onclick="deleteAssignment()">Delete Assignment</button>
+
+        <button class="back-btn" onclick="showPage('rosterPage')">Back to Roster</button>
+    </div>
+    <!-- Student Assignment Grades Management Script -->
+    <script>
+        function showStudentDetails(studentId) {
+            fetch(`/get_student_details/${studentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error("Error:", data.error);
+                        alert("Student not found");
+                    } else {
+                        document.getElementById("studentId").value = studentId;
+                        document.getElementById("studentNameTitle").textContent = data.name;
+
+                        let assignmentsHtml = "";
+                        data.assignments.forEach(assignment => {
+                            assignmentsHtml += `<li>${assignment.name}: ${assignment.grade}</li>`;
+                        });
+                        document.getElementById("assignmentsList").innerHTML = assignmentsHtml;
+
+                        let modifyAssignmentHtml = "";
+                        data.assignments.forEach(assignment => {
+                            modifyAssignmentHtml += `<option value="${assignment.name}">${assignment.name}</option>`;
+                        });
+                        document.getElementById("modifyAssignment").innerHTML = modifyAssignmentHtml;
+
+                        let deleteAssignmentHtml = "";
+                        data.assignments.forEach(assignment => {
+                            deleteAssignmentHtml += `<option value="${assignment.name}">${assignment.name}</option>`;
+                        });
+                        document.getElementById("deleteAssignment").innerHTML = deleteAssignmentHtml;
+
+                        document.getElementById("rosterPage").classList.add("hidden");
+
+                        document.getElementById("studentGrades").classList.remove("hidden");
+                        document.getElementById("studentGrades").classList.add("visible");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching student details:", error);
+                    alert("Failed to load student details");
+                });
+        }
+        async function addAssignment() {
+            const studentId = document.getElementById("studentId").value;
+            const assignmentName = document.getElementById("newAssignment").value;
+            const grade = document.getElementById("newAssignmentGrade").value;
+
+            const response = await fetch(`/add_assignment/${studentId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ assignmentName, grade })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+                showStudentDetails(studentId);
+            } else {
+                alert(result.error);
+            }
+        }
+        async function updateGrade() {
+            const studentId = document.getElementById("studentId").value;
+            const assignmentName = document.getElementById("modifyAssignment").value;
+            const newGrade = document.getElementById("modifyGrade").value;
+
+            const response = await fetch(`/update_grade/${studentId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ assignmentName, newGrade })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+                showStudentDetails(studentId);
+            } else {
+                alert(result.error);
+            }
+        }
+        async function deleteAssignment() {
+            const studentId = document.getElementById("studentId").value;
+            const assignmentName = document.getElementById("deleteAssignment").value;
+
+            const response = await fetch(`/delete_assignment/${studentId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ assignmentName })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+                showStudentDetails(studentId);
+            } else {
+                alert(result.error);
+            }
+        }
+    </script>
+
+
+    <!-- Subpage Navigation Script -->
+    <script>
+        let currentCourseName = "";
+
+        function showPage(pageId, courseName = '') {
+            document.querySelectorAll('.container').forEach(page => page.classList.add('hidden'));
+            const activePage = document.getElementById(pageId);
+            if (activePage) {
+                activePage.classList.remove('hidden');
+            }
+
+            if (courseName) {
+                currentCourseName = courseName;
+            }
+
+            const courseTitle = document.getElementById('courseTitle');
+            if (pageId === 'coursePage' && courseTitle) {
+                courseTitle.innerText = currentCourseName;
+            }
+
+            const rosterTitle = document.getElementById('rosterTitle');
+            if (pageId === 'rosterPage' && rosterTitle) {
+                rosterTitle.innerText = `${currentCourseName} - Class Roster`;
+            }
+        }
+    </script>
+
+</body>
 </html>
